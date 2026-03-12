@@ -2,10 +2,9 @@ import streamlit as st
 import joblib
 import numpy as np
 
-st.title("AI Health and Fitness Assistant")
+st.title("AI Health & Fitness Assistant")
 
-# Load model
-model = joblib.load("fitness_model.pkl")
+model = joblib.load("health_model.pkl")
 
 age = st.number_input("Age")
 height = st.number_input("Height (cm)")
