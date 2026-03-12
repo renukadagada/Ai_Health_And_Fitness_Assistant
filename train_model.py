@@ -4,13 +4,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 import joblib
 
-# Generate synthetic dataset
 np.random.seed(42)
 rows = 5000
 
 data = pd.DataFrame({
     "Age": np.random.randint(18, 60, rows),
-    "Gender": np.random.randint(0, 2, rows),   # 0=Female, 1=Male
+    "Gender": np.random.randint(0, 2, rows),
     "Height": np.random.randint(150, 200, rows),
     "Weight": np.random.randint(50, 100, rows),
     "BMI": np.random.uniform(18, 35, rows),
@@ -25,7 +24,6 @@ data = pd.DataFrame({
     "Goal": np.random.randint(0, 3, rows)
 })
 
-# Create target variable (Calories Burned)
 data["Calories"] = (
     data["Duration"] * 5 +
     data["Intensity"] * 40 +
@@ -34,20 +32,16 @@ data["Calories"] = (
     np.random.normal(0, 20, rows)
 )
 
-# Features and target
 X = data.drop("Calories", axis=1)
 y = data["Calories"]
 
-# Train-test split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Train model
-model = RandomForestRegressor(n_estimators=200, random_state=42)
+model = RandomForestRegressor(n_estimators=200)
 model.fit(X_train, y_train)
 
-# Save model
 joblib.dump(model, "health_model.pkl")
 
-print("Model trained and saved as health_model.pkl")
+print("Model created successfully")
