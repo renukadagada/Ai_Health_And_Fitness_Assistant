@@ -1,27 +1,53 @@
 import pandas as pd
-import pickle
+import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
+import joblib
 
-# Load dataset
-data = pd.read_csv("fitness.csv")
+# Generate synthetic dataset
+np.random.seed(42)
+rows = 5000
 
-# Features
-X = data.drop("Fitness_Level", axis=1)
-y = data["Fitness_Level"]
+data = pd.DataFrame({
+    "Age": np.random.randint(18, 60, rows),
+    "Gender": np.random.randint(0, 2, rows),   # 0=Female, 1=Male
+    "Height": np.random.randint(150, 200, rows),
+    "Weight": np.random.randint(50, 100, rows),
+    "BMI": np.random.uniform(18, 35, rows),
+    "Resting_HR": np.random.randint(55, 90, rows),
+    "Exercise_Type": np.random.randint(0, 5, rows),
+    "Duration": np.random.randint(10, 90, rows),
+    "Intensity": np.random.randint(0, 3, rows),
+    "Heart_Rate": np.random.randint(90, 170, rows),
+    "Steps": np.random.randint(2000, 15000, rows),
+    "Sleep": np.random.uniform(5, 9, rows),
+    "Water": np.random.uniform(1, 4, rows),
+    "Goal": np.random.randint(0, 3, rows)
+})
 
-# Split
+# Create target variable (Calories Burned)
+data["Calories"] = (
+    data["Duration"] * 5 +
+    data["Intensity"] * 40 +
+    (data["Heart_Rate"] - 80) * 2 +
+    data["Weight"] * 0.5 +
+    np.random.normal(0, 20, rows)
+)
+
+# Features and target
+X = data.drop("Calories", axis=1)
+y = data["Calories"]
+
+# Train-test split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Model
-model = RandomForestClassifier(n_estimators=600, max_depth=12)
+# Train model
+model = RandomForestRegressor(n_estimators=200, random_state=42)
 model.fit(X_train, y_train)
 
-# Accuracy
-accuracy = model.score(X_test, y_test)
-print("Model Accuracy:", accuracy)
-
 # Save model
-pickle.dump(model, open("health_model.pkl", "wb"))
+joblib.dump(model, "health_model.pkl")
+
+print("Model trained and saved as health_model.pkl")
